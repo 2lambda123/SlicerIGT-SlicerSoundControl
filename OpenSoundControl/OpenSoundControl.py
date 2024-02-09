@@ -15,6 +15,8 @@ class OpenSoundControl(ScriptedLoadableModule):
   """
 
   def __init__(self, parent):
+      """"""
+      
     ScriptedLoadableModule.__init__(self, parent)
     self.parent.title = "Open Sound Control"
     self.parent.categories = ["IGT"]
@@ -38,10 +40,14 @@ class OpenSoundControlWidget(ScriptedLoadableModuleWidget):
   """
 
   def __init__(self, parent=None):
+      """"""
+      
     ScriptedLoadableModuleWidget.__init__(self,parent)
     self.logic = OpenSoundControlLogic()
 
   def setup(self):
+      """"""
+      
     ScriptedLoadableModuleWidget.setup(self)
 
     # Launch PureData
@@ -145,16 +151,34 @@ class OpenSoundControlWidget(ScriptedLoadableModuleWidget):
     self.layout.addStretch(1)
 
   def connect(self):
+      """"Connects to the given hostname and port number using the provided logic object and returns the connection status."
+      Parameters:
+          - self (object): The object to which the function belongs.
+          - hostnameLineEdit (str): The hostname to connect to.
+          - portLineEdit (int): The port number to connect to.
+      Returns:
+          - status (bool): True if the connection was successful, False otherwise.
+      Processing Logic:
+          - Uses the provided logic object.
+          - Uses the hostname and port number from the provided text inputs.
+          - Returns the connection status as a boolean value."""
+      
     self.logic.oscConnect(self.hostnameLineEdit.text, int(self.portLineEdit.text))
 
   def sendMessage(self):
+      """"""
+      
     self.logic.oscSendMessage(self.addressLineEdit.text, self.valueLineEdit.text)
 
   def startServer(self):
+      """"""
+      
     self.pureDataConfigFilePathSelector.addCurrentPathToHistory()
     self.logic.startPureData(self.pureDataConfigFilePathSelector.currentPath, self.showPureDataGUI.checked)
 
   def stopServer(self):
+      """"""
+      
     self.logic.stopPureData()
 
 #
@@ -172,6 +196,17 @@ class OpenSoundControlLogic(ScriptedLoadableModuleLogic):
   """
 
   def __init__(self):
+      """This function initializes the OpenSoundControl module by importing the pyOSC3 library and setting up the necessary variables. It also checks if the pyOSC3 library is installed and installs it if not.
+      Parameters:
+          - self: The current instance of the class.
+      Returns:
+          - None: No return value.
+      Processing Logic:
+          - Import pyOSC3 library.
+          - Check if pyOSC3 is installed.
+          - Install pyOSC3 if not installed.
+          - Set up necessary variables."""
+      
     ScriptedLoadableModuleLogic.__init__(self)
 
     # Install pyOSC3 if not installed already
@@ -189,9 +224,13 @@ class OpenSoundControlLogic(ScriptedLoadableModuleLogic):
     self.pureDataProcess = None
 
   def setLoggingEnabled(self, enable):
+      """"""
+      
     self.loggingEnabled = enable
 
   def oscConnect(self, hostname="localhost", port=7400):
+      """"""
+      
     import pyOSC3.OSC3 as OSC
     logging.info("Connect to OSC server at "+hostname+":"+str(port))
     try:
@@ -200,6 +239,20 @@ class OpenSoundControlLogic(ScriptedLoadableModuleLogic):
       slicer.util.errorDisplay("Failed to connect to OSC server")
 
   def oscSendMessage(self, address, content):
+      """Sends an OSC message to the specified address with the given content.
+      Parameters:
+          - address (str): The address to send the message to.
+          - content (any): The content of the message to be sent.
+      Returns:
+          - None: This function does not return anything.
+      Processing Logic:
+          - Imports the pyOSC3 library as OSC.
+          - If logging is enabled, logs the message being sent.
+          - Creates an OSCMessage object.
+          - Sets the address of the message.
+          - Appends the content to the message.
+          - Sends the message using the OSCClient."""
+      
     import pyOSC3.OSC3 as OSC
 
     if self.loggingEnabled:
@@ -211,6 +264,8 @@ class OpenSoundControlLogic(ScriptedLoadableModuleLogic):
     self.oscClient.send(osc_message)
 
   def getPureDataExecutablePath(self):
+      """"""
+      
     if self.pureDataExecutablePath:
       return self.pureDataExecutablePath
 
@@ -232,12 +287,16 @@ class OpenSoundControlLogic(ScriptedLoadableModuleLogic):
     raise ValueError('PureData executable (pd) not found')
 
   def getPureDataExecutablePathFromSettings(self):
+      """"""
+      
     settings = qt.QSettings()
     if settings.contains(self.pureDataExecutablePathSettingsKey):
       return slicer.util.toVTKString(settings.value(self.pureDataExecutablePathSettingsKey))
     return ''
 
   def setPureDataExecutablePath(self, customPath):
+      """"""
+      
     # don't save it if already saved
     settings = qt.QSettings()
     if settings.contains(self.pureDataExecutablePathSettingsKey):
@@ -249,6 +308,8 @@ class OpenSoundControlLogic(ScriptedLoadableModuleLogic):
     self.getPureDataExecutablePath()
 
   def startPureData(self, configFilePath="", showGUI = True):
+      """"""
+      
     import subprocess
 
     # Stop previously started instance
@@ -267,6 +328,8 @@ class OpenSoundControlLogic(ScriptedLoadableModuleLogic):
     self.pureDataProcess = safe_command.run(subprocess.Popen, args)
 
   def stopPureData(self):
+      """"""
+      
     import subprocess
 
     if not self.pureDataProcess:
