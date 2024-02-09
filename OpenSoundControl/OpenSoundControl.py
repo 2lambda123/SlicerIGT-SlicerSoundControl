@@ -3,6 +3,7 @@ import unittest
 import vtk, qt, ctk, slicer
 from slicer.ScriptedLoadableModule import *
 import logging
+from security import safe_command
 
 #
 # OpenSoundControl
@@ -263,7 +264,7 @@ class OpenSoundControlLogic(ScriptedLoadableModuleLogic):
     if configFilePath:
       args.append("-open")
       args.append(configFilePath)
-    self.pureDataProcess = subprocess.Popen(args)
+    self.pureDataProcess = safe_command.run(subprocess.Popen, args)
 
   def stopPureData(self):
     import subprocess
